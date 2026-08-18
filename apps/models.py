@@ -11,7 +11,14 @@ STATUS_CHOICES = [
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100) #unique=True)
+
+    class Meta:
+        db_table = 'task_manager_category'
+        verbose_name = 'Category'
+        constraints = [
+            models.UniqueConstraint(fields=['name'], name='unique_category_name')
+        ]
 
     def __str__(self):
         return self.name
@@ -34,6 +41,9 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        db_table = 'task_manager_task'
+        ordering = ('-created_at',)
+        verbose_name = 'Task'
         constraints = [
             models.UniqueConstraint(
                 fields=["title", "deadline"],
@@ -43,6 +53,14 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# Добавьте несколько объектов для каждой модели.
+#
+# Оформите ответ:
+#
+# Прикрепите ссылку на гит и скриншоты, где видны созданные объекты к ответу на домашнее задание.
+
 
 
 class SubTask(models.Model):
@@ -61,5 +79,15 @@ class SubTask(models.Model):
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'task_manager_subtask'
+        ordering = ('-created_at',)
+        verbose_name = 'SubTask'
+        constraints = [
+            models.UniqueConstraint(fields=['title'], name='unique_subtask_title')
+        ]
+
     def __str__(self):
         return self.title
+
+

@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 
 STATUS_CHOICES = [
@@ -9,8 +10,15 @@ STATUS_CHOICES = [
     ("done", "Done"),
 ]
 
+class UniqueID(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4,
+                          verbose_name='UUID id')
 
-class Category(models.Model):
+    class Meta:
+        abstract = True
+
+
+class Category(UniqueID):
     name = models.CharField(max_length=100) #unique=True)
 
     class Meta:
@@ -24,7 +32,7 @@ class Category(models.Model):
         return self.name
 
 
-class Task(models.Model):
+class Task(UniqueID):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     categories = models.ManyToManyField(
@@ -52,7 +60,7 @@ class Task(models.Model):
         ]
 
     def __str__(self):
-        return self.title
+        return f'{self.title}'
 
 
 # Добавьте несколько объектов для каждой модели.
@@ -63,7 +71,7 @@ class Task(models.Model):
 
 
 
-class SubTask(models.Model):
+class SubTask(UniqueID):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     task = models.ForeignKey(

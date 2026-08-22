@@ -15,13 +15,16 @@ from rest_framework import serializers
 class TaskListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'deadline', ]
-
-
-
+        fields = ['id', 'title', 'description', 'status', 'deadline', ]
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['title', 'description', 'status', 'deadline',]
+
+
+class TaskGetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id', 'title', 'description', 'status', 'deadline',]

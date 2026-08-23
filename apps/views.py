@@ -6,12 +6,16 @@ from rest_framework import status
 from .serializers import TaskListSerializer, TaskCreateSerializer, TaskGetSerializer
 from .models import Task
 from django.db.models import Count
+from django.utils import timezone
+
 
 @api_view(['GET'])
 def task_list(request):
     tasks = Task.objects.all()
     serializer = TaskListSerializer(tasks, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 @api_view(['GET'])
 def task_id(request, pk):
@@ -22,6 +26,8 @@ def task_id(request, pk):
 status=status.HTTP_404_NOT_FOUND)
     serializer = TaskGetSerializer(task)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 @api_view(['GET'])
 def task_static(request):
@@ -34,7 +40,9 @@ def task_static(request):
         'status_task' : list(status_task),
         'overdue_task' : overdue_task
     }
-    return Response(data, status=status.HTTP_200_ok)
+    return Response(data, status=status.HTTP_200_OK)
+
+
 
 
 @api_view(['POST'])
@@ -46,9 +54,3 @@ def task_create(request):
     else:
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-# Создайте эндпоинт для получения статистики задач, таких как общее количество задач,
-# количество задач по каждому статусу и количество просроченных задач.
-#
-# Шаги для выполнения:
-# Определите представление для агрегирования данных о задачах.
-# Создайте маршрут для обращения к представлению.

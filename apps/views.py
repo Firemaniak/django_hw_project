@@ -8,12 +8,42 @@ from .serializers import TaskListSerializer, TaskCreateSerializer, TaskGetSerial
 from .models import Task, SubTask
 from django.db.models import Count
 from django.utils import timezone
+from django.db.models.functions import ExtractWeekDay
+from rest_framework.pagination import PageNumberPagination
 
+
+
+# @api_view(['GET'])
+# def task_list(request):
+#     tasks = Task.objects.all()
+#     serializer = TaskListSerializer(tasks, many=True)
+#     return Response(serializer.data, status=status.HTTP_200_OK)
+
+WEEKDAY_MAP = {
+    'monday': 2, 'tuesday': 3, 'wednesday': 4, 'thursday': 5,
+    'friday': 6, 'saturday': 7, 'sunday': 1,
+    'понедельник': 2, 'вторник': 3, 'среда': 4, 'четверг': 5,
+    'пятница': 6, 'суббота': 7, 'воскресенье': 1,
+}
 
 
 @api_view(['GET'])
 def task_list(request):
+    weekday_param = request.query_params.get('weekday')
+
     tasks = Task.objects.all()
+
+    if weekday_param:
+        weekday_number = WEEKDAY_MAP.get(weekday_param.lower())
+        if weekday_number is None:
+            return Response(
+                {'error': 'Invalid weekday value'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        tasks = tasks.annotate(
+            weekday=ExtractWeekDay('deadline')
+        ).filter(weekday=weekday_number)
+
     serializer = TaskListSerializer(tasks, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -112,5 +142,46 @@ class SubTaskDetailUpdateDeleteView(APIView):
                             status=status.HTTP_404_NOT_FOUND)
         subtask.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+class SubTaskPagination(PageNumberPagination):
+    page_size = 5
+
+
+@api_view(['GET'])
+def subtask_list(request):
+    subtasks = SubTask.objects.all().order_by('-created_at')
+
+    paginator = SubTaskPagination()
+    result_page = paginator.paginate_queryset(subtasks, request)
+    serializer = SubTaskCreateSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
+
+
+
+
+
+# views.py
+@api_view(['GET'])
+def subtask_filtered_list(request):
+    task_title = request.query_params.get('task_title')
+    status_param = request.query_params.get('status')
+
+    subtasks = SubTask.objects.all().order_by('-created_at')
+
+    if task_title:
+        subtasks = subtasks.filter(task__title__icontains=task_title)
+
+    if status_param:
+        subtasks = subtasks.filter(status=status_param)
+
+    paginator = SubTaskPagination()
+    result_page = paginator.paginate_queryset(subtasks, request)
+    serializer = SubTaskCreateSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 

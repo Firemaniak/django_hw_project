@@ -13,12 +13,16 @@
 #     path('subtasks/filter/', views.subtask_filtered_list, name='subtask-filtered-list'),
 # ]
 
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
     TaskListCreateView, TaskDetailUpdateDeleteView, task_static,
     SubTaskListCreateView, SubTaskDetailUpdateDeleteView,
-    subtask_list, subtask_filtered_list,
+    subtask_list, subtask_filtered_list, CategoryViewSet
 )
+
+router = DefaultRouter()
+router.register(r'catigories', CategoryViewSet)
 
 urlpatterns = [
     path('tasks/stats/', task_static, name='task-stats'),
@@ -29,4 +33,6 @@ urlpatterns = [
     path('subtasks/filtered/', subtask_filtered_list, name='subtask-filtered'),
     path('subtasks/', SubTaskListCreateView.as_view(), name='subtask-list-create'),
     path('subtasks/<uuid:pk>/', SubTaskDetailUpdateDeleteView.as_view(), name='subtask-detail-update-delete'),
+
+    path('', include(router.urls)),
 ]

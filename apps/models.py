@@ -1,4 +1,5 @@
 from django.db import models
+from .managers import SoftDeleteManager
 import uuid
 
 
@@ -20,6 +21,9 @@ class UniqueID(models.Model):
 
 class Category(UniqueID):
     name = models.CharField(max_length=100) #unique=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(blank=True, null=True)
+    objects = SoftDeleteManager()
 
     class Meta:
         db_table = 'task_manager_category'
@@ -30,6 +34,13 @@ class Category(UniqueID):
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        self.is_deleted = True
+        self.save()
+
+
+
 
 
 class Task(UniqueID):

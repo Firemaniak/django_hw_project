@@ -2,14 +2,17 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, filters
-from .serializers import TaskListSerializer, TaskCreateSerializer, TaskGetSerializer, SubTaskCreateSerializer
-from .models import Task, SubTask
+from .serializers import TaskListSerializer, TaskCreateSerializer, TaskGetSerializer, SubTaskCreateSerializer, CategoryCreateSerializer
 from django.db.models import Count
 from django.utils import timezone
 from django.db.models.functions import ExtractWeekDay
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from .models import Category, SubTask, Task
+
 
 
 class TaskListCreateView(ListCreateAPIView):
@@ -270,5 +273,26 @@ def subtask_filtered_list(request):
 #     result_page = paginator.paginate_queryset(subtasks, request)
 #     serializer = SubTaskCreateSerializer(result_page, many=True)
 #     return paginator.get_paginated_response(serializer.data)
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategoryCreateSerializer
+
+#Добавьте кастомный метод count_tasks используя декоратор @action для подсчета количества задач, связанных с каждой категорией.
+    @action(detail=False, methods = ['Get'])
+    def count_tasks(self, request):
+        cat_count_tasks = Category.objects.annotate(task_count=Count("tasks"))
+        data = [
+            {
+                "id": category.id,
+                "category": category.name,
+                "task_count": category.task_count
+            }
+            for category in cat_count_tasks
+        ]
+        return Response(data)
+
+
 
 

@@ -12,6 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from .models import Category, SubTask, Task
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -278,6 +279,7 @@ def subtask_filtered_list(request):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategoryCreateSerializer
+    #permission_classes = [IsAuthenticated]
 
 #Добавьте кастомный метод count_tasks используя декоратор @action для подсчета количества задач, связанных с каждой категорией.
     @action(detail=False, methods = ['Get'])
@@ -292,6 +294,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
             for category in cat_count_tasks
         ]
         return Response(data)
+
+
+# class PrivateView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     def get(self, request):
+#         return Response({"message": f"Hello, {request.user.username}!"})
+
 
 
 

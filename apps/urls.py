@@ -20,6 +20,7 @@ from .views import (
     SubTaskListCreateView, SubTaskDetailUpdateDeleteView,
     subtask_list, subtask_filtered_list, CategoryViewSet
 )
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'catigories', CategoryViewSet)
@@ -35,4 +36,7 @@ urlpatterns = [
     path('subtasks/<uuid:pk>/', SubTaskDetailUpdateDeleteView.as_view(), name='subtask-detail-update-delete'),
 
     path('', include(router.urls)),
+
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

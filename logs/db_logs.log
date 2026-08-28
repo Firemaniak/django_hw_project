@@ -1,0 +1,8 @@
+2026-08-28 18:04:31,347 [DEBUG] (0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None; alias=default
+2026-08-28 18:04:31,351 [DEBUG] (0.000) SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"; args=(); alias=default
+2026-08-28 18:07:23,918 [DEBUG] (0.000) SELECT "task_manager_category"."id", "task_manager_category"."name", "task_manager_category"."is_deleted", "task_manager_category"."deleted_at", "task_manager_category"."created_at" FROM "task_manager_category" WHERE ("task_manager_category"."is_deleted" = 0 AND "task_manager_category"."id" = '74366ffec79f40d090eee9d401ba33c7') LIMIT 21; args=(False, '74366ffec79f40d090eee9d401ba33c7'); alias=default
+2026-08-28 18:08:38,361 [DEBUG] (0.001) SELECT "task_manager_category"."id", "task_manager_category"."name", "task_manager_category"."is_deleted", "task_manager_category"."deleted_at", "task_manager_category"."created_at" FROM "task_manager_category" WHERE ("task_manager_category"."is_deleted" = 0 AND "task_manager_category"."id" = '74366ffec79f40d090eee9d401ba33c7') LIMIT 21; args=(False, '74366ffec79f40d090eee9d401ba33c7'); alias=default
+2026-08-28 18:08:38,411 [DEBUG] (0.047) UPDATE "task_manager_category" SET "name" = 'cat 2', "is_deleted" = 1, "deleted_at" = NULL, "created_at" = '2026-08-28 15:59:24.169806' WHERE "task_manager_category"."id" = '74366ffec79f40d090eee9d401ba33c7'; args=('cat 2', True, None, '2026-08-28 15:59:24.169806', '74366ffec79f40d090eee9d401ba33c7'); alias=default

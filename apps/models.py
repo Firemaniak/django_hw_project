@@ -24,6 +24,7 @@ class Category(UniqueID):
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(blank=True, null=True)
     objects = SoftDeleteManager()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'task_manager_category'

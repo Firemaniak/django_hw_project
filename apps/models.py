@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from .managers import SoftDeleteManager
 import uuid
@@ -59,6 +60,9 @@ class Task(UniqueID):
     )
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tasks",)
 
     class Meta:
         db_table = 'task_manager_task'
@@ -98,6 +102,9 @@ class SubTask(UniqueID):
     )
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE,
+                              related_name="subbtasks", )
 
     class Meta:
         db_table = 'task_manager_subtask'

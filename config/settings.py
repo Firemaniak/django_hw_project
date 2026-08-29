@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'drf_yasg',
 
     'apps.apps.AppsConfig',
 ]
@@ -99,6 +100,16 @@ TEMPLATES = [
         },
     },
 ]
+
+# SWAGGER_SETTINGS = {
+#     'SECURITY_DEFINITIONS': {
+#         'Bearer': {
+#             'type': 'apiKey',
+#             'name': 'Authorization',
+#             'in': 'header',
+#         }
+#     },
+# }
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

@@ -16,13 +16,15 @@ from django.utils import timezone
 class TaskListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'status', 'deadline', ]
+        fields = ['id', 'owner', 'title', 'description', 'status', 'deadline', ]
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'deadline',]
+        fields = ['title', 'owner', 'description', 'status', 'deadline',]
+        read_only_fields = ['owner']
+
 
     def validate_deadline(self, value):
         if value < timezone.now():
@@ -39,7 +41,7 @@ class SubTaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubTask
         fields = '__all__'
-        read_only_fields = ['created_at']
+        read_only_fields = ['created_at', 'owner']
 
 
 class TaskGetSerializer(serializers.ModelSerializer):
@@ -47,7 +49,9 @@ class TaskGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'status', 'deadline', 'subtasks', ]
+        fields = ['id', 'owner', 'title', 'description', 'status', 'deadline', 'subtasks', ]
+
+
 
 
 

@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status, filters
 from .serializers import TaskListSerializer, TaskCreateSerializer, TaskGetSerializer, SubTaskCreateSerializer, CategoryCreateSerializer
@@ -13,6 +14,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from .models import Category, SubTask, Task
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwnerOrReadOnly
 
 
 
@@ -30,9 +32,13 @@ class TaskListCreateView(ListCreateAPIView):
             return TaskCreateSerializer
         return TaskListSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method in ('PUT', 'PATCH'):
@@ -146,10 +152,14 @@ class SubTaskListCreateView(ListCreateAPIView):
     ordering_fields = ['created_at']
     ordering = ['created_at']
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskCreateSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
 
@@ -300,6 +310,18 @@ class CategoryViewSet(viewsets.ModelViewSet):
 #     permission_classes = [IsAuthenticated]
 #     def get(self, request):
 #         return Response({"message": f"Hello, {request.user.username}!"})
+
+
+
+#Создайте представления для получения задач текущего пользователя.
+#Реализуйте представление для получения задач, принадлежащих текущему пользователю.
+
+class UserTaskListView(ListAPIView):
+    serializer_class = TaskListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(owner=self.request.user)
 
 
 

@@ -17,15 +17,17 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     TaskListCreateView, TaskDetailUpdateDeleteView, task_static,
-    SubTaskListCreateView, SubTaskDetailUpdateDeleteView,
+    SubTaskListCreateView, SubTaskDetailUpdateDeleteView, UserTaskListView,
     subtask_list, subtask_filtered_list, CategoryViewSet
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 router = DefaultRouter()
 router.register(r'catigories', CategoryViewSet)
 
 urlpatterns = [
+    path('tasks/my/', UserTaskListView.as_view(), name='user-task-list'),
     path('tasks/stats/', task_static, name='task-stats'),
     path('tasks/', TaskListCreateView.as_view(), name='task-list-create'),
     path('tasks/<uuid:pk>/', TaskDetailUpdateDeleteView.as_view(), name='task-detail-update-delete'),

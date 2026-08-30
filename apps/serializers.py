@@ -12,6 +12,7 @@
 from .models import Category, SubTask, Task
 from rest_framework import serializers
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class TaskListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -91,6 +92,25 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
 # Шаги для выполнения:
 # Определите TaskDetailSerializer в файле serializers.py.
 # Вложите SubTaskSerializer внутрь TaskDetailSerializer.
+
+
+
+# Регистрация пользователя----------------------------------------------------------------------
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            email=validated_data.get('email', '')
+        )
+        return user
 
 
 

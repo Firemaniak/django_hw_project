@@ -18,9 +18,11 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     TaskListCreateView, TaskDetailUpdateDeleteView, task_static,
     SubTaskListCreateView, SubTaskDetailUpdateDeleteView, UserTaskListView,
-    subtask_list, subtask_filtered_list, CategoryViewSet
+    subtask_list, subtask_filtered_list, CategoryViewSet, RegisterView
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .login import LoginView
+from .logout import LogoutView
 
 
 router = DefaultRouter()
@@ -41,4 +43,7 @@ urlpatterns = [
 
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]

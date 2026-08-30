@@ -15,6 +15,9 @@ from rest_framework.decorators import action
 from .models import Category, SubTask, Task
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
+from .serializers import RegisterSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime, timezone
 
 
 
@@ -322,6 +325,52 @@ class UserTaskListView(ListAPIView):
 
     def get_queryset(self):
         return Task.objects.filter(owner=self.request.user)
+
+
+
+def set_jwt_cookies(response, user):
+    refresh_token = RefreshToken.for_user(user)
+    access_token = refresh_token.access_token
+
+    # Устанавливает JWT токены в куки.
+    access_expiry = datetime.utcfromtimestamp(access_token['exp'])
+    refresh_expiry = datetime.utcfromtimestamp(refresh_token['exp'])
+
+    response.set_cookie(
+        key='access_token',
+        value=str(access_token),
+        httponly=True,
+        secure=False,
+        samesite='Lax',
+        expires=access_expiry
+    )
+
+    response.set_cookie(
+        key='refresh_token',
+        value=str(refresh_token),
+        httponly=True,
+        secure=False,
+        samesite='Lax',
+        expires=refresh_expiry
+    )
+
+
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            response = Response({
+                'user': {
+                    'username': user.username,
+                    'email': user.email
+                }
+            }, status=status.HTTP_201_CREATED)
+            set_jwt_cookies(response, user)
+            return response
+        else:
+            return Response(serializer.errors,
+status=status.HTTP_400_BAD_REQUEST)
 
 
 
